@@ -35,6 +35,38 @@ namespace AoC2023
             Array.Copy(pCubeSets, cubeSets, nbCubeSets);
         }
 
+        public void GetRequiredNbCubesPerColor(out int pReqNbRedCubes, out int pReqNbGreenCubes, out int pReqNbBlueCubes)
+        {
+            int maxNbRedCubes = -1;
+            int maxNbGreenCubes = -1;
+            int maxNbBlueCubes = -1;
+
+            foreach (CubeSet cubeSet in cubeSets)
+            {
+                int nbRedCubes = cubeSet.nbRedCubes;
+                if (nbRedCubes > maxNbRedCubes)
+                {
+                    maxNbRedCubes = nbRedCubes;
+                }
+
+                int nbGreenCubes = cubeSet.nbGreenCubes;
+                if (nbGreenCubes > maxNbGreenCubes)
+                {
+                    maxNbGreenCubes = nbGreenCubes;
+                }
+
+                int nbBlueCubes = cubeSet.nbBlueCubes;
+                if (nbBlueCubes > maxNbBlueCubes)
+                {
+                    maxNbBlueCubes = nbBlueCubes;
+                }
+            }
+
+            pReqNbRedCubes = maxNbRedCubes;
+            pReqNbGreenCubes = maxNbGreenCubes;
+            pReqNbBlueCubes = maxNbBlueCubes;
+        }
+
         public bool IsPossible(int pNbRedCubes, int pNbGreenCubes, int pNbBlueCubes)
         {
             foreach (CubeSet cubeSet in cubeSets)
@@ -90,7 +122,7 @@ namespace AoC2023
             return new CubeSet(nbRedCubes, nbGreenCubes, nbBlueCubes);
         }
 
-        private static CubeGame ParsePuzzle1Line(string pPuzzleLine)
+        private static CubeGame ParsePuzzleLine(string pPuzzleLine)
         {
             int colonIndex = pPuzzleLine.IndexOf(COLON);
             int cubeGameId = int.Parse(pPuzzleLine.Substring(5, colonIndex-5));
@@ -114,6 +146,7 @@ namespace AoC2023
         {
             string inputPath = args[0];
             int possibleGameIdSum = 0;
+            int reqGamePowerSum = 0;
 
             using (StreamReader reader = new StreamReader(inputPath))
             {
@@ -122,16 +155,23 @@ namespace AoC2023
                 while ((line = reader.ReadLine()) != null)
                 {
                     line = line.Trim();
-                    CubeGame cubeGame = ParsePuzzle1Line(line);
+                    CubeGame cubeGame = ParsePuzzleLine(line);
 
                     if(cubeGame.IsPossible(12, 13, 14))
                     {
                         possibleGameIdSum += cubeGame.gameId;
                     }
+
+                    int reqNbRedCubes;
+                    int reqNbGreenCubes;
+                    int reqNbBlueCubes;
+                    cubeGame.GetRequiredNbCubesPerColor(out reqNbRedCubes, out reqNbGreenCubes, out reqNbBlueCubes);
+                    reqGamePowerSum += reqNbRedCubes * reqNbGreenCubes * reqNbBlueCubes;
                 }
             }
 
             Console.WriteLine("Puzzle 1: " + possibleGameIdSum);
+            Console.WriteLine("Puzzle 2: " + reqGamePowerSum);
         }
     }
 }
