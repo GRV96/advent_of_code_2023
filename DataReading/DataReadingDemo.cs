@@ -13,8 +13,8 @@ foreach(string rawLine in rawLines)
 List<int> linesNbWords = DataReading.ParseDataFromFile<int>(inputPath, str => str.Split(' ').Length);
 
 Console.WriteLine("\nNumber of Words");
-foreach(int lineNbWord in linesNbWords)
+foreach(int nbWords in linesNbWords)
 {
-    Console.WriteLine(lineNbWord);
+    Console.WriteLine(nbWords);
 }
 Console.WriteLine();
