@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AoC2023
 {
-    internal class DataReading
+    public class DataReading
     {
         public static List<String> GetLinesFromFile(String pFilePath)
         {

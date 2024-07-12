@@ -7,4 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataReading\DataReading.csproj" />
+  </ItemGroup>
+
 </Project>
