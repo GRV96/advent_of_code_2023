@@ -1,8 +1,8 @@
 ﻿using AoC2023;
 
-String inputPath = args[0];
+string inputPath = args[0];
 
-List<String> rawLines = DataReading.GetLinesFromFile(inputPath);
+List<string> rawLines = DataReading.GetLinesFromFile(inputPath);
 
 Console.WriteLine("Raw Lines");
 foreach(string rawLine in rawLines)

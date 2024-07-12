@@ -5,13 +5,13 @@ namespace AoC2023
 {
     public class DataReading
     {
-        public static List<String> GetLinesFromFile(String pFilePath)
+        public static List<string> GetLinesFromFile(string pFilePath)
         {
-            List<String> lines = new List<String>();
+            List<string> lines = new List<string>();
 
             using(StreamReader reader = new StreamReader(pFilePath))
             {
-                String? line = null;
+                string? line = null;
 
                 while((line = reader.ReadLine()) != null)
                 {
@@ -23,13 +23,13 @@ namespace AoC2023
             return lines;
         }
 
-        public static List<T> ParseDataFromFile<T>(String pFilePath, Func<String, T> pParsing)
+        public static List<T> ParseDataFromFile<T>(string pFilePath, Func<string, T> pParsing)
         {
             List<T> allData = new List<T>();
 
             using (StreamReader reader = new StreamReader(pFilePath))
             {
-                String? line = null;
+                string? line = null;
 
                 while ((line = reader.ReadLine()) != null)
                 {
