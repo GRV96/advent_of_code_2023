@@ -8,11 +8,11 @@ namespace AoC2023
         public readonly int nbGreenCubes;
         public readonly int nbBlueCubes;
 
-        public CubeSet(int pNbRedCubes, int pNbGreenCubes, int pnbBlueCubes)
+        public CubeSet(int pNbRedCubes, int pNbGreenCubes, int pNbBlueCubes)
         {
             nbRedCubes = pNbRedCubes;
             nbGreenCubes = pNbGreenCubes;
-            nbBlueCubes = pnbBlueCubes;
+            nbBlueCubes = pNbBlueCubes;
         }
 
         public bool IsPossible(int pNbRedCubes, int pNbGreenCubes, int pNbBlueCubes)
@@ -151,7 +151,6 @@ namespace AoC2023
             using (StreamReader reader = new StreamReader(inputPath))
             {
                 string? line = null;
-
                 while ((line = reader.ReadLine()) != null)
                 {
                     line = line.Trim();
