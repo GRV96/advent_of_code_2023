@@ -212,7 +212,8 @@
             Console.WriteLine("Puzzle 2: " + gearRatioSum);
         }
 
-        private static Number ParseNumberFromEngineSchematicsLine(string pEngineSchematicLine, int pLineIndex, int pColumnIndex)
+        private static Number ParseNumberFromEngineSchematicsLine(
+            string pEngineSchematicLine, int pLineIndex, int pColumnIndex)
         {
             List<char> digits = new List<char>();
 
