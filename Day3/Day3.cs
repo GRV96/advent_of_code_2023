@@ -2,6 +2,73 @@
 {
     internal class Day3
     {
+        private const char ASTERISK = '*';
+        private const char PERIOD = '.';
+
+        private struct Gear
+        {
+            public readonly int lineIndex;
+            public readonly int columnIndex;
+
+            private HashSet<Number> _adjacentNumbers;
+
+            public int NbAdjacentNumbers
+            {
+                get
+                {
+                    return _adjacentNumbers.Count;
+                }
+            }
+
+            public Gear(int pLineIndex, int pColumnIndex)
+            {
+                lineIndex = pLineIndex;
+                columnIndex = pColumnIndex;
+                _adjacentNumbers = new HashSet<Number>();
+            }
+
+            public int CalculateGearRatio()
+            {
+                int nbAdjacentNumbers = NbAdjacentNumbers;
+                if (nbAdjacentNumbers == 0)
+                {
+                    return 0;
+                }
+
+                int gearRatio = 1;
+                foreach (Number number in _adjacentNumbers)
+                {
+                    gearRatio *= number.value;
+                }
+                return gearRatio;
+            }
+
+            public bool CheckIfNumberIsAdjacent(Number pNumber)
+            {
+                int prevLineIndex = lineIndex - 1;
+                int nextLineIndex = lineIndex + 1;
+
+                int prevColumnIndex = columnIndex - 1;
+                int nextColumnIndex = columnIndex + 1;
+
+                if (
+                    pNumber.IncludesCoordinates(prevLineIndex, columnIndex)
+                    || pNumber.IncludesCoordinates(prevLineIndex, nextColumnIndex)
+                    || pNumber.IncludesCoordinates(lineIndex, nextColumnIndex)
+                    || pNumber.IncludesCoordinates(nextLineIndex, nextColumnIndex)
+                    || pNumber.IncludesCoordinates(nextLineIndex, columnIndex)
+                    || pNumber.IncludesCoordinates(nextLineIndex, prevColumnIndex)
+                    || pNumber.IncludesCoordinates(lineIndex, prevColumnIndex)
+                    || pNumber.IncludesCoordinates(prevLineIndex, prevColumnIndex))
+                {
+                    _adjacentNumbers.Add(pNumber);
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
         private struct Number
         {
             public readonly int lineIndex;
@@ -16,11 +83,18 @@
                 nbDigits = pNbDigits;
                 value = pValue;
             }
+
+            public bool IncludesCoordinates(int pLineIndex, int pColumnIndex)
+            {
+                return pLineIndex == lineIndex
+                    && pColumnIndex >= columnIndex
+                    && pColumnIndex < columnIndex + nbDigits;
+            }
         }
 
         private static bool IsCharASymbol(char pSomeChar)
         {
-            return !Char.IsDigit(pSomeChar) && pSomeChar != '.';
+            return !Char.IsDigit(pSomeChar) && pSomeChar != PERIOD;
         }
 
         private static bool IsCharInEngineSchematicsASymbol(List<char[]> pEngineSchematics, int pLineIndex, int pColumnIndex)
@@ -87,7 +161,9 @@
         {
             string inputPath = args[0];
             List<char[]> engineSchematics = new List<char[]>();
+
             List<Number> numbers = new List<Number>();
+            List<Gear> gears = new List<Gear>();
 
             using (StreamReader reader = new StreamReader(inputPath))
             {
@@ -98,8 +174,13 @@
                     line = line.Trim();
                     char[] lineChars = line.ToCharArray();
                     engineSchematics.Add(lineChars);
-                    List<Number> numbersOnLine = SpotNumbersOnEngineSchematicsLine(line, lineIndex);
+
+                    List<Number> numbersOnLine = new List<Number>();
+                    List<Gear> gearsOnLine = new List<Gear>();
+                    ParseEngineSchematicsLine(line, lineIndex, numbersOnLine, gearsOnLine);
                     numbers.AddRange(numbersOnLine);
+                    gears.AddRange(gearsOnLine);
+
                     lineIndex++;
                 }
             }
@@ -111,9 +192,24 @@
                 {
                     partNumberSum += number.value;
                 }
+
+                foreach (Gear gear in gears)
+                {
+                    gear.CheckIfNumberIsAdjacent(number);
+                }
+            }
+
+            int gearRatioSum = 0;
+            foreach (Gear gear in gears)
+            {
+                if (gear.NbAdjacentNumbers == 2)
+                {
+                    gearRatioSum += gear.CalculateGearRatio();
+                }
             }
 
             Console.WriteLine("Puzzle 1: " + partNumberSum);
+            Console.WriteLine("Puzzle 2: " + gearRatioSum);
         }
 
         private static Number ParseNumberFromEngineSchematicsLine(string pEngineSchematicLine, int pLineIndex, int pColumnIndex)
@@ -144,9 +240,11 @@
             return new Number(-1, -1, -1, 0);
         }
 
-        private static List<Number> SpotNumbersOnEngineSchematicsLine(string pEngineSchematicLine, int pLineIndex)
+        private static void ParseEngineSchematicsLine(
+            string pEngineSchematicLine, int pLineIndex, List<Number> pNumbers, List<Gear> pGears)
         {
-            List<Number> numbers = new List<Number>();
+            pNumbers.Clear();
+            pGears.Clear();
 
             int lineLength = pEngineSchematicLine.Length;
             for (int j = 0; j < lineLength; j++)
@@ -156,12 +254,14 @@
                 if (Char.IsDigit(schematicChar))
                 {
                     Number number = ParseNumberFromEngineSchematicsLine(pEngineSchematicLine, pLineIndex, j);
-                    numbers.Add(number);
+                    pNumbers.Add(number);
                     j += number.nbDigits - 1;
                 }
+                else if (schematicChar == ASTERISK)
+                {
+                    pGears.Add(new Gear(pLineIndex, j));
+                }
             }
-
-            return numbers;
         }
     }
 }
