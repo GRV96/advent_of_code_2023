@@ -14,9 +14,9 @@
             Array.Copy(pConversionRanges, _conversionRanges, nbRanges);
         }
 
-        public int Convert(int pSource)
+        public Int64 Convert(Int64 pSource)
         {
-            int destination = pSource;
+            Int64 destination = pSource;
 
             foreach (ConversionRange range in _conversionRanges)
             {

@@ -13,7 +13,7 @@ namespace AoC2023
         {
             string inputPath = args[0];
 
-            List<int> seedIds = null;
+            List<Int64> seedIds = null;
 
             string mapTitle = string.Empty;
             List<ConversionRange> conversionRanges = new List<ConversionRange>();
@@ -69,10 +69,10 @@ namespace AoC2023
                 }
             }
 
-            int nearestLocationId = int.MaxValue;
-            foreach (int seedId in seedIds)
+            Int64 nearestLocationId = Int64.MaxValue;
+            foreach (Int64 seedId in seedIds)
             {
-                int destination = seedId;
+                Int64 destination = seedId;
 
                 foreach (ConversionMap conversionMap in conversionMaps.Values)
                 {
@@ -91,23 +91,23 @@ namespace AoC2023
         private static ConversionRange ParseConversionRange(string pRangeData)
         {
             string[] dataItems = pRangeData.Split(SPACE);
-            int lowerDestinationBound = int.Parse(dataItems[0]);
-            int lowerSourceBound = int.Parse(dataItems[1]);
-            int rangeLength = int.Parse(dataItems[2]);
+            Int64 lowerDestinationBound = Int64.Parse(dataItems[0]);
+            Int64 lowerSourceBound = Int64.Parse(dataItems[1]);
+            Int64 rangeLength = Int64.Parse(dataItems[2]);
 
-            int upperSourceBound = lowerSourceBound + rangeLength - 1;
-            int conversion = lowerDestinationBound - lowerSourceBound;
+            Int64 upperSourceBound = lowerSourceBound + rangeLength - 1;
+            Int64 conversion = lowerDestinationBound - lowerSourceBound;
             return new ConversionRange(lowerSourceBound, upperSourceBound, conversion);
         }
 
-        private static List<int> ParseSeedIds(string pSeedLine)
+        private static List<Int64> ParseSeedIds(string pSeedLine)
         {
-            List<int> seedIds = new List<int>();
+            List<Int64> seedIds = new List<Int64>();
             string[] seedStrings = pSeedLine.Split(SPACE);
 
             foreach (string seedString in seedStrings)
             {
-                if (int.TryParse(seedString, out int seedId))
+                if (Int64.TryParse(seedString, out Int64 seedId))
                 {
                     seedIds.Add(seedId);
                 }
