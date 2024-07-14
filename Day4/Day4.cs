@@ -6,14 +6,36 @@
         private const string PIPE = "|";
         private const char SPACE = ' ';
 
-        private struct Scratchcard
+        private class Scratchcard
         {
             public readonly int id;
 
             private int[] _winningNumbers;
             private int[] _numbers;
 
+            private int _nbCopiesOwned = 1;
+            private int _nbMatches;
             private int _nbPoints;
+
+            public int NbCopiesOwned
+            {
+                get
+                {
+                    return _nbCopiesOwned;
+                }
+                set
+                {
+                    _nbCopiesOwned = value;
+                }
+            }
+
+            public int NbMatches
+            {
+                get
+                {
+                    return _nbMatches;
+                }
+            }
 
             public int NbPoints
             {
@@ -35,32 +57,80 @@
                 _numbers = new int[nbNumbers];
                 Array.Copy(pNumbers, _numbers, nbNumbers);
 
-                CalculatePoints();
+                CalculateMatchesAndPoints();
             }
 
-            private void CalculatePoints()
+            private void CalculateMatchesAndPoints()
             {
-                int matches = 0;
+                _nbMatches = 0;
 
                 foreach (int number in _numbers)
                 {
                     if (_winningNumbers.Contains(number))
                     {
-                        matches++;
+                        _nbMatches++;
                     }
                 }
 
-                if (matches > 0)
+                if (_nbMatches > 0)
                 {
-                    _nbPoints = (int)Math.Pow(2, matches - 1);
+                    _nbPoints = (int)Math.Pow(2, _nbMatches - 1);
                 }
+            }
+        }
+
+        private struct ScratchcardRepository
+        {
+            private Dictionary<int, Scratchcard> _content;
+
+            public ScratchcardRepository()
+            {
+                _content = new Dictionary<int, Scratchcard>();
+            }
+
+            public void AddScratchcard(Scratchcard pScratchcard)
+            {
+                _content[pScratchcard.id] = pScratchcard;
+            }
+
+            public void CopyScratchcards()
+            {
+                foreach (Scratchcard scratchcard in _content.Values)
+                {
+                    int scratchcardId = scratchcard.id;
+                    int nbCopiesOwned = scratchcard.NbCopiesOwned;
+                    int nbMatches = scratchcard.NbMatches;
+                    int idBound = scratchcardId + nbMatches;
+
+                    for (int i = scratchcardId + 1; i <= idBound; i++)
+                    {
+                        _content[i].NbCopiesOwned += nbCopiesOwned;
+                    }
+                }
+            }
+
+            public int CountScratchcards()
+            {
+                int nbScratchcards = 0;
+
+                foreach (Scratchcard scratchcard in _content.Values)
+                {
+                    nbScratchcards += scratchcard.NbCopiesOwned;
+                }
+
+                return nbScratchcards;
+            }
+
+            public Scratchcard GetScratchcard(int pScratchcardId)
+            {
+                return _content[pScratchcardId];
             }
         }
 
         static void Main(string[] args)
         {
             string inputPath = args[0];
-            List<Scratchcard> scratchcards = new List<Scratchcard>();
+            ScratchcardRepository scratchcardRepository = new ScratchcardRepository();
             int scratchcardPointSum = 0;
 
             using (StreamReader reader = new StreamReader(inputPath))
@@ -70,12 +140,15 @@
                 {
                     line = line.Trim();
                     Scratchcard scratchcard = ParseScartchcardData(line);
-                    scratchcards.Add(scratchcard);
+                    scratchcardRepository.AddScratchcard(scratchcard);
                     scratchcardPointSum += scratchcard.NbPoints;
                 }
             }
 
+            scratchcardRepository.CopyScratchcards();
+
             Console.WriteLine("Puzzle 1: " + scratchcardPointSum);
+            Console.WriteLine("Puzzle 2: " + scratchcardRepository.CountScratchcards());
         }
 
         private static bool ParseDataItem(string pDataItem, out int pNumber, out bool pIsScratchcardId)
