@@ -3,12 +3,12 @@
     internal class ConversionRange
     {
         // Both bounds are inclusive.
-        private readonly Int64 _lowerSourceBound;
-        private readonly Int64 _upperSourceBound;
+        private readonly long _lowerSourceBound;
+        private readonly long _upperSourceBound;
 
-        private readonly Int64 _conversion;
+        private readonly long _conversion;
 
-        public ConversionRange(Int64 pLowerSourceBound, Int64 pUpperSourceBound, Int64 pConversion)
+        public ConversionRange(long pLowerSourceBound, long pUpperSourceBound, long pConversion)
         {
             _lowerSourceBound = pLowerSourceBound;
             _upperSourceBound = pUpperSourceBound;
@@ -16,12 +16,12 @@
             _conversion = pConversion;
         }
 
-        private bool IsSourceIncluded(Int64 pSource)
+        private bool IsSourceIncluded(long pSource)
         {
             return pSource >= _lowerSourceBound && pSource <= _upperSourceBound;
         }
 
-        public bool Convert(Int64 pSource, out Int64 pDestination)
+        public bool Convert(long pSource, out long pDestination)
         {
             bool isSourceWithinRange = IsSourceIncluded(pSource);
             pDestination = isSourceWithinRange ? pSource + _conversion : pSource;
