@@ -14,7 +14,7 @@ namespace AoC2023
             string inputPath = args[0];
 
             List<long> seedIdsPuzzle1 = null;
-            List<long> seedIdsPuzzle2 = null;
+            List<LongIntRange> seedIdRangesPuzzle2 = null;
 
             string mapTitle = string.Empty;
             List<ConversionRange> conversionRanges = new List<ConversionRange>();
@@ -56,7 +56,7 @@ namespace AoC2023
                     else if (line.IndexOf(SEEDS_COLON) >= 0)
                     {
                         seedIdsPuzzle1 = ParseSeedIdsPuzzle1(line);
-                        seedIdsPuzzle2 = ParseSeedIdsPuzzle2(line);
+                        seedIdRangesPuzzle2 = ParseSeedIdRangesPuzzle2(line);
                     }
                     else if (line.IndexOf(MAP_COLON) >= 0)
                     {
@@ -70,30 +70,42 @@ namespace AoC2023
                 }
             }
 
-            long FindNearestLocationId(List<long> pSeedIds)
+            long FindLocationIdFromSeedId(long pSeedId)
             {
-                long nearestLocationId = long.MaxValue;
+                long locationId = pSeedId;
 
-                foreach (long seedId in pSeedIds)
+                foreach (ConversionMap conversionMap in conversionMaps.Values)
                 {
-                    long destination = seedId;
-
-                    foreach (ConversionMap conversionMap in conversionMaps.Values)
-                    {
-                        destination = conversionMap.Convert(destination);
-                    }
-
-                    if (destination < nearestLocationId)
-                    {
-                        nearestLocationId = destination;
-                    }
+                    locationId = conversionMap.Convert(locationId);
                 }
 
-                return nearestLocationId;
+                return locationId;
             }
 
-            long nearestLocationIdPuzzle1 = FindNearestLocationId(seedIdsPuzzle1);
-            long nearestLocationIdPuzzle2 = FindNearestLocationId(seedIdsPuzzle2);
+            long nearestLocationIdPuzzle1 = long.MaxValue;
+            foreach (long seedId in seedIdsPuzzle1)
+            {
+                long locationId = FindLocationIdFromSeedId(seedId);
+
+                if (locationId < nearestLocationIdPuzzle1)
+                {
+                    nearestLocationIdPuzzle1 = locationId;
+                }
+            }
+
+            long nearestLocationIdPuzzle2 = long.MaxValue;
+            foreach (LongIntRange seedIdRange in seedIdRangesPuzzle2)
+            {
+                for (long i = seedIdRange.lowerBound; i <= seedIdRange.upperBound; i++)
+                {
+                    long locationId = FindLocationIdFromSeedId(i);
+
+                    if (locationId < nearestLocationIdPuzzle2)
+                    {
+                        nearestLocationIdPuzzle2 = locationId;
+                    }
+                }
+            }
 
             Console.WriteLine("Puzzle 1: " + nearestLocationIdPuzzle1);
             Console.WriteLine("Puzzle 2: " + nearestLocationIdPuzzle2);
@@ -127,9 +139,9 @@ namespace AoC2023
             return seedIds;
         }
 
-        private static List<long> ParseSeedIdsPuzzle2(string pSeedLine)
+        private static List<LongIntRange> ParseSeedIdRangesPuzzle2(string pSeedLine)
         {
-            List<long> seedIds = new List<long>();
+            List<LongIntRange> seedIdRanges = new List<LongIntRange>();
             string[] seedStrings = pSeedLine.Split(SPACE);
 
             int nbSeedStrings = seedStrings.Length;
@@ -152,13 +164,11 @@ namespace AoC2023
                 long upperBound = lowerBound + rangeLength - 1;
 
                 // Both bounds are inclusive.
-                for (long j = lowerBound; j <= upperBound; j++)
-                {
-                    seedIds.Add(j);
-                }
+                LongIntRange seedIdRange = new LongIntRange(lowerBound, upperBound);
+                seedIdRanges.Add(seedIdRange);
             }
 
-            return seedIds;
+            return seedIdRanges;
         }
     }
 }

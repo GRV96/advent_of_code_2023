@@ -1,22 +1,20 @@
-﻿using Microsoft.VisualBasic;
-
-namespace AoC2023
+﻿namespace AoC2023
 {
     internal class LongIntRange
     {
         // Both bounds are inclusive.
-        public readonly long lowerSourceBound;
-        public readonly long upperSourceBound;
+        public readonly long lowerBound;
+        public readonly long upperBound;
 
-        public LongIntRange(long pLowerSourceBound, long pUpperSourceBound)
+        public LongIntRange(long pLowerBound, long pUpperBound)
         {
-            lowerSourceBound = pLowerSourceBound;
-            upperSourceBound = pUpperSourceBound;
+            lowerBound = pLowerBound;
+            upperBound = pUpperBound;
         }
 
-        public bool IsNumberIncluded(long pSource)
+        public bool IsNumberIncluded(long pNumber)
         {
-            return pSource >= lowerSourceBound && pSource <= upperSourceBound;
+            return pNumber >= lowerBound && pNumber <= upperBound;
         }
     }
 }
