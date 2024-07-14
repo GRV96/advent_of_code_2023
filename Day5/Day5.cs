@@ -13,7 +13,8 @@ namespace AoC2023
         {
             string inputPath = args[0];
 
-            List<Int64> seedIds = null;
+            List<long> seedIdsPuzzle1 = null;
+            List<long> seedIdsPuzzle2 = null;
 
             string mapTitle = string.Empty;
             List<ConversionRange> conversionRanges = new List<ConversionRange>();
@@ -54,8 +55,8 @@ namespace AoC2023
                     }
                     else if (line.IndexOf(SEEDS_COLON) >= 0)
                     {
-                        seedIds = ParseSeedIds(line);
-                        continue;
+                        seedIdsPuzzle1 = ParseSeedIdsPuzzle1(line);
+                        seedIdsPuzzle2 = ParseSeedIdsPuzzle2(line);
                     }
                     else if (line.IndexOf(MAP_COLON) >= 0)
                     {
@@ -69,47 +70,91 @@ namespace AoC2023
                 }
             }
 
-            Int64 nearestLocationId = Int64.MaxValue;
-            foreach (Int64 seedId in seedIds)
+            long FindNearestLocationId(List<long> pSeedIds)
             {
-                Int64 destination = seedId;
+                long nearestLocationId = long.MaxValue;
 
-                foreach (ConversionMap conversionMap in conversionMaps.Values)
+                foreach (long seedId in pSeedIds)
                 {
-                    destination = conversionMap.Convert(destination);
+                    long destination = seedId;
+
+                    foreach (ConversionMap conversionMap in conversionMaps.Values)
+                    {
+                        destination = conversionMap.Convert(destination);
+                    }
+
+                    if (destination < nearestLocationId)
+                    {
+                        nearestLocationId = destination;
+                    }
                 }
 
-                if (destination < nearestLocationId)
-                {
-                    nearestLocationId = destination;
-                }
+                return nearestLocationId;
             }
 
-            Console.WriteLine("Puzzle 1: " + nearestLocationId);
+            long nearestLocationIdPuzzle1 = FindNearestLocationId(seedIdsPuzzle1);
+            long nearestLocationIdPuzzle2 = FindNearestLocationId(seedIdsPuzzle2);
+
+            Console.WriteLine("Puzzle 1: " + nearestLocationIdPuzzle1);
+            Console.WriteLine("Puzzle 2: " + nearestLocationIdPuzzle2);
         }
 
         private static ConversionRange ParseConversionRange(string pRangeData)
         {
             string[] dataItems = pRangeData.Split(SPACE);
-            Int64 lowerDestinationBound = Int64.Parse(dataItems[0]);
-            Int64 lowerSourceBound = Int64.Parse(dataItems[1]);
-            Int64 rangeLength = Int64.Parse(dataItems[2]);
+            long lowerDestinationBound = long.Parse(dataItems[0]);
+            long lowerSourceBound = long.Parse(dataItems[1]);
+            long rangeLength = long.Parse(dataItems[2]);
 
-            Int64 upperSourceBound = lowerSourceBound + rangeLength - 1;
-            Int64 conversion = lowerDestinationBound - lowerSourceBound;
+            long upperSourceBound = lowerSourceBound + rangeLength - 1;
+            long conversion = lowerDestinationBound - lowerSourceBound;
             return new ConversionRange(lowerSourceBound, upperSourceBound, conversion);
         }
 
-        private static List<Int64> ParseSeedIds(string pSeedLine)
+        private static List<long> ParseSeedIdsPuzzle1(string pSeedLine)
         {
-            List<Int64> seedIds = new List<Int64>();
+            List<long> seedIds = new List<long>();
             string[] seedStrings = pSeedLine.Split(SPACE);
 
             foreach (string seedString in seedStrings)
             {
-                if (Int64.TryParse(seedString, out Int64 seedId))
+                if (long.TryParse(seedString, out long seedId))
                 {
                     seedIds.Add(seedId);
+                }
+            }
+
+            return seedIds;
+        }
+
+        private static List<long> ParseSeedIdsPuzzle2(string pSeedLine)
+        {
+            List<long> seedIds = new List<long>();
+            string[] seedStrings = pSeedLine.Split(SPACE);
+
+            int nbSeedStrings = seedStrings.Length;
+            for (int i = 0; i < nbSeedStrings; i += 2)
+            {
+                long lowerBound;
+                if (!long.TryParse(seedStrings[i], out lowerBound))
+                {
+                    i--;
+                    continue;
+                }
+
+                long rangeLength;
+                if (!long.TryParse(seedStrings[i + 1], out rangeLength))
+                {
+                    i--;
+                    continue;
+                }
+
+                long upperBound = lowerBound + rangeLength - 1;
+
+                // Both bounds are inclusive.
+                for (long j = lowerBound; j <= upperBound; j++)
+                {
+                    seedIds.Add(j);
                 }
             }
 
