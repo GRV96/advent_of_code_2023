@@ -132,7 +132,7 @@
             Dictionary<CardLabel, int> pLabelCounts, bool pIncludeJoker,
             out CardLabel pHighestCountLabel, out int pHighestLabelCount)
         {
-            bool wasHighestCountFound = false; // Stays false if no other key than LX is found.
+            bool wasHighestCountFound = false;
             pHighestCountLabel = CardLabel.UNDEFINED;
             pHighestLabelCount = int.MinValue;
 
