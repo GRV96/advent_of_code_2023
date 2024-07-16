@@ -2,6 +2,7 @@
 {
     internal class CardHand : IComparable<CardHand>
     {
+        public const char JOKER_CHAR = 'X';
         public const int SIZE = 5;
 
         private CardLabel[] _cards;
@@ -65,6 +66,14 @@
         private void DetermineHandType()
         {
             Dictionary<CardLabel, int> labelCounts = GetLabelCounts();
+            if (labelCounts.TryGetValue(CardLabel.LX, out int nbJokers) && nbJokers > 0)
+            {
+                GetHighestCountLabel(labelCounts, false, out CardLabel highestCountLabel, out int highestLabelCount);
+                SubstituteJoker(highestCountLabel, out CardHand substituteCardHand);
+                _type = substituteCardHand._type;
+                return;
+            }
+
             int nbLabelCounts = labelCounts.Count;
             CardLabel firstLabel = _cards[0];
             int firstLabelCount = labelCounts[firstLabel];
@@ -108,6 +117,35 @@
             }
         }
 
+        private static bool GetHighestCountLabel(
+            Dictionary<CardLabel, int> pLabelCounts, bool pIncludeJoker,
+            out CardLabel pHighestCountLabel, out int pHighestLabelCount)
+        {
+            bool wasHighestCountFound = false; // Stays false if no other key than LX is found.
+            pHighestCountLabel = CardLabel.UNDEFINED;
+            pHighestLabelCount = int.MinValue;
+
+            foreach (KeyValuePair<CardLabel, int> kvp in pLabelCounts)
+            {
+                CardLabel cardLabel = kvp.Key;
+                int labelCount = kvp.Value;
+
+                if (!pIncludeJoker && cardLabel == CardLabel.LX)
+                {
+                    continue;
+                }
+
+                if (labelCount > pHighestLabelCount)
+                {
+                    pHighestCountLabel = cardLabel;
+                    pHighestLabelCount = labelCount;
+                    wasHighestCountFound = true;
+                }
+            }
+
+            return wasHighestCountFound;
+        }
+
         private Dictionary<CardLabel, int> GetLabelCounts()
         {
             Dictionary<CardLabel, int> labelCounts = new Dictionary<CardLabel, int>();
@@ -131,6 +169,25 @@
         public CardLabel GetCardLabel(int pIndex)
         {
             return _cards[pIndex];
+        }
+
+        public bool SubstituteJoker(CardLabel pCardLabel, out CardHand pNewCardHand)
+        {
+            bool originalCardContainsJokers = false;
+            CardLabel[] cards = new CardLabel[SIZE];
+            Array.Copy(_cards, cards, SIZE);
+
+            for (int i = 0; i < SIZE; i++)
+            {
+                if (cards[i] == CardLabel.LX)
+                {
+                    cards[i] = pCardLabel;
+                    originalCardContainsJokers = true;
+                }
+            }
+
+            pNewCardHand = new CardHand(cards, _bid);
+            return originalCardContainsJokers;
         }
     }
 }
