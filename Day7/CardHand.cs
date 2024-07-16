@@ -67,16 +67,16 @@
         {
             CardLabel firstLabel = _cards[0];
             Dictionary<CardLabel, int> labelCounts = GetLabelCounts();
-            CardLabel highestCountLabel;
             if (labelCounts.TryGetValue(CardLabel.LX, out int nbJokers) && nbJokers > 0)
             {
-                if (nbJokers == SIZE)
+                if (nbJokers == SIZE || nbJokers == SIZE - 1)
                 {
                     _type = CardHandType.FIVE_KIND;
                     return;
                 }
 
-                GetHighestCountLabel(labelCounts, false, out highestCountLabel, out int highestLabelCount);
+                // Pretend the jokers are the label with the highest count.
+                GetHighestCountLabel(labelCounts, false, out CardLabel highestCountLabel, out int highestLabelCount);
                 labelCounts[highestCountLabel] += nbJokers;
                 labelCounts.Remove(CardLabel.LX);
 
