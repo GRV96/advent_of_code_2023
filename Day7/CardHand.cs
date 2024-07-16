@@ -65,17 +65,28 @@
 
         private void DetermineHandType()
         {
+            CardLabel firstLabel = _cards[0];
             Dictionary<CardLabel, int> labelCounts = GetLabelCounts();
+            CardLabel highestCountLabel;
             if (labelCounts.TryGetValue(CardLabel.LX, out int nbJokers) && nbJokers > 0)
             {
-                GetHighestCountLabel(labelCounts, false, out CardLabel highestCountLabel, out int highestLabelCount);
-                SubstituteJoker(highestCountLabel, out CardHand substituteCardHand);
-                _type = substituteCardHand._type;
-                return;
+                if (nbJokers == SIZE)
+                {
+                    _type = CardHandType.FIVE_KIND;
+                    return;
+                }
+
+                GetHighestCountLabel(labelCounts, false, out highestCountLabel, out int highestLabelCount);
+                labelCounts[highestCountLabel] += nbJokers;
+                labelCounts.Remove(CardLabel.LX);
+
+                if (firstLabel == CardLabel.LX)
+                {
+                    firstLabel = highestCountLabel;
+                }
             }
 
             int nbLabelCounts = labelCounts.Count;
-            CardLabel firstLabel = _cards[0];
             int firstLabelCount = labelCounts[firstLabel];
 
             if (nbLabelCounts == 1 && firstLabelCount == SIZE)
