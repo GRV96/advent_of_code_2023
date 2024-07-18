@@ -43,19 +43,17 @@ namespace AoC2023
                             navigationInstructions = new NavigationInstructions(line);
                         }
                     }
-                    else
-                    {
-                        Match nodeMatch = nodePattern.Match(line);
-                        if (nodeMatch.Success)
-                        {
-                            DesertNode desertNode = MakeNodeFromRegexMatch(nodeMatch);
-                            string desertNodeName = desertNode.name;
-                            desertNodes[desertNodeName] = desertNode;
 
-                            if(desertNodeName[desertNodeName.Length - 1] == START_LETTER)
-                            {
-                                nodesPuzzle2.Add(desertNode);
-                            }
+                    Match nodeMatch = nodePattern.Match(line);
+                    if (nodeMatch.Success)
+                    {
+                        DesertNode desertNode = MakeNodeFromRegexMatch(nodeMatch);
+                        string desertNodeName = desertNode.name;
+                        desertNodes[desertNodeName] = desertNode;
+
+                        if(desertNodeName[desertNodeName.Length - 1] == START_LETTER)
+                        {
+                            nodesPuzzle2.Add(desertNode);
                         }
                     }
                 }
