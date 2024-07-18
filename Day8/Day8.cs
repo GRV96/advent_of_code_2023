@@ -53,16 +53,16 @@ namespace AoC2023
             }
 
             DesertNode node = desertNodes[START_NODE];
-            int nbNodesVisited = 0;
+            int nbSteps = 0;
             while (node.name != DESTINATION_NODE)
             {
                 char instruction = navigationInstructions.GetNextInstruction();
                 string nextNodeName = node.GetNodeNameOnSide((Direction)instruction);
                 node = desertNodes[nextNodeName];
-                nbNodesVisited++;
+                nbSteps++;
             }
 
-            Console.WriteLine("Puzzle 1: " + nbNodesVisited);
+            Console.WriteLine("Puzzle 1: " + nbSteps);
         }
     }
 }
