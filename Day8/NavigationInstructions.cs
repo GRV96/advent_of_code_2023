@@ -22,5 +22,10 @@
 
             return _instructions[_index++];
         }
+
+        public void ResetIndex()
+        {
+            _index = 0;
+        }
     }
 }
