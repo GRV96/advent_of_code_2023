@@ -51,7 +51,7 @@ namespace AoC2023
                         string desertNodeName = desertNode.name;
                         desertNodes[desertNodeName] = desertNode;
 
-                        if(desertNodeName[desertNodeName.Length - 1] == START_LETTER)
+                        if(desertNodeName[^1] == START_LETTER)
                         {
                             nodesPuzzle2.Add(desertNode);
                         }
@@ -88,7 +88,7 @@ namespace AoC2023
                         nodePuzzle2 = desertNodes[nextNodeName];
                         nodesPuzzle2[i] = nodePuzzle2;
 
-                        if (nextNodeName[nextNodeName.Length - 1] != DESTINATION_LETTER)
+                        if (nextNodeName[^1] != DESTINATION_LETTER)
                         {
                             isPuzzle2Done = false;
                         }
