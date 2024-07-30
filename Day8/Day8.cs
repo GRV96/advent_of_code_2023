@@ -61,7 +61,7 @@ namespace AoC2023
 
             int nbNodesPuzzle2 = nodesPuzzle2.Count;
             int nbStepsPuzzle1 = 0;
-            long nbStepsPuzzle2 = 0;
+            ulong nbStepsPuzzle2 = 0;
             bool isPuzzle1Done = !desertNodes.TryGetValue(START_NODE, out DesertNode nodePuzzle1);
             bool isPuzzle2Done = false;
             while (!isPuzzle1Done || !isPuzzle2Done)
