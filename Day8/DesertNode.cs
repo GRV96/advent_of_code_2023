@@ -29,5 +29,10 @@
 
             return nodeName;
         }
+
+        public override string ToString()
+        {
+            return name + " = " + "(" + leftNode + ", " + rightNode +")";
+        }
     }
 }
